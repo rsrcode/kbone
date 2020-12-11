@@ -1,5 +1,5 @@
 require('../common/common')
 
 export default {
-    name: 'a page'
+    name: 'b page'
 }

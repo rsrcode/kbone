@@ -1,5 +1,6 @@
 import a from './a'
 import b from './b'
+import c from './c'
 
 // rem 和页面样式修改
 window.onload = function () {

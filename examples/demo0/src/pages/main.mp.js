@@ -1,5 +1,6 @@
 import a from './a'
 import b from './b'
+import c from './c'
 
 export default function createApp() {
     const container = document.createElement('div')

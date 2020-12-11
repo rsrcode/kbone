@@ -7,6 +7,40 @@ const {
 } = mp.$$adapter
 
 /**
+ * 判断两值是否相等
+ */
+function isEqual(a, b) {
+    if (typeof a === 'number' && typeof b === 'number') {
+        // 值为数值，需要考虑精度
+        return parseInt(a * 1000, 10) === parseInt(b * 1000, 10)
+    }
+
+    if (typeof a === 'object' && typeof b === 'object') {
+        if (a === null || b === null) return a === b
+
+        const isAArray = Array.isArray(a)
+        const isBArray = Array.isArray(b)
+        if (isAArray && isBArray) {
+            if (a.length !== b.length) return false
+            for (let i = 0, len = a.length; i < len; i++) {
+                if (!isEqual(a[i], b[i])) return false
+            }
+            return true
+        } else if (!isBArray && !isBArray) {
+            const aKeys = Object.keys(a)
+            const bKeys = Object.keys(b)
+            if (aKeys.length !== bKeys.length) return false
+            for (const key of aKeys) {
+                if (!isEqual(a[key], b[key])) return false
+            }
+            return true
+        }
+    }
+
+    return a === b
+}
+
+/**
  * 检查组件属性
  */
 function checkComponentAttr({props = []}, name, domNode, destData, oldData) {
@@ -14,7 +48,7 @@ function checkComponentAttr({props = []}, name, domNode, destData, oldData) {
         for (const name of props) {
             let newValue = domNode.getAttribute(name)
             newValue = newValue !== undefined ? newValue : null
-            if (!oldData || oldData[name] !== newValue) destData[name] = newValue
+            if (!oldData || !isEqual(oldData[name], newValue)) destData[name] = newValue
         }
     }
 
@@ -22,7 +56,7 @@ function checkComponentAttr({props = []}, name, domNode, destData, oldData) {
     const newId = domNode.id
     if (!oldData || oldData.id !== newId) destData.id = newId
     const newClass = `wx-comp-${name} node-${domNode.$$nodeId} ${domNode.className || ''}`
-    if (!oldData || oldData.class !== newClass) destData.class = newClass
+    if (!oldData || oldData.className !== newClass) destData.className = newClass
     const newStyle = domNode.style.cssText
     if (!oldData || oldData.style !== newStyle) destData.style = newStyle
 }
